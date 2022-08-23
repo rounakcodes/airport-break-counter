@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { countBreaksWithAirports } from "../utils/breakCounter";
+import { countBreaksWithAirports } from "../../utils/breakCounter";
 
 const Grid = styled.div`
   display: grid;
