@@ -1,24 +1,16 @@
-import logo from './logo.svg';
-import './App.css';
+import React, {useState} from 'react'
+import Wrapper from './components/Wrapper'
+import AirplaneInput from "./components/AirplaneInput";
+import BreakCounter from "./components/BreakCounter";
 
 function App() {
+  const [airplaneData, setAirplaneData] = useState("");
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Wrapper>
+      <AirplaneInput airplaneData={airplaneData} setAirplaneData={setAirplaneData} />
+      <BreakCounter airplaneData={airplaneData.split(",").map((str) => Number(str))}/>
+    </Wrapper>
   );
 }
 
