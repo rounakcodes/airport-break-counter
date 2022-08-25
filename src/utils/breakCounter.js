@@ -26,71 +26,52 @@ approach 2: reverse approach
     - if there is no such place we save on needless computations
   - if there is such place, we try to find the farthest such place
   - again recurse from that place
-approach 3: forget about looping through every item, this problem is about jumping, if jump fails, save the failed jump index, retrace back one index and continue. If saved index is encountered again, then return failure.
+approach 3: forget about looping through every item, this problem is about jumping, if jump fails, save the failed jump index, retrace back one index and continue. If saved index is encountered again, then return failure. Update: A failure test case was provided for this logic: [3, 5, 3, 4, 0, 0, 3, 1, 0, 1]. A counter for tracking the retracement was added to fix it. But it gets complicated when the counter itself needs to be reset.
+approach 4: Retracing issue in approach 3 causes a rethink of approach. Instead of being worried about failing jumps, we need to focus on maximum reach from any index. Assume that we always reach the end of the array. Loop through the array. Save the indexed jumped to by the first item in the array as maxIndex. Let the next jumps compete with that index to update the maxIndex. We maintain a failureIndex which we set to maxIndex initially and then everytime we reach the failureIndex in the array, we again set it to the maxIndex. That way we know where to increment our jump counter
 */
 
 // We are not able to reuse our plane even if it has fuel left after landing. This situation resembles a break journey. Our task is to find the number of breaks in our journey. Hence, the name *countBreaks*.
 export const countBreaks = (arr) => {
-  let breakCount = 0;
-  let failures = [];
-  let index = 0;
-  const lastIndex = arr.length - 1;
-  // our goal is for the index to be equal to or greater than the last index in the array
-  while (index < lastIndex) {
-    if (arr[index] > 0) {
-      index = index + arr[index];
-      breakCount++;
-    } else {
-      index = index - 1;
-      // if we are reaching an index for the second time, we will be reaching it forever, so return failure
-      if (failures.includes(index) || index < 0) return -1;
-      failures.push(index);
+  let breaks = 0;
+  let maxIndex = 0;
+  let failureIndex = 0;
+
+  for (let i = 0; i < arr.length - 1; i++) {
+    // maxIndex will hold our maximum reach from each index in the array
+    maxIndex = Math.max(maxIndex, i + arr[i]);
+    // will be true
+    // - for the first item in the array
+    // - if we reach the index which was our saved maximum reach 
+    // - What is saved maximum reach?
+    //   - initially: the maximum reach of our first item in the array
+    //   - later: when we arrive at the index which was our maximum reach, the new maximum reach at that index
+    // - this is also the point where we update our break count because before this point there was no need to
+    if (i === failureIndex) {
+
+      breaks++;
+      failureIndex = maxIndex;
     }
   }
-  return breakCount;
+  // we have not reached the destination
+  if (maxIndex < arr.length-1) return -1;
+  return breaks;
 };
 
-export const countBreaksWithAirports = (arr) => {
-  let breakCount = 0;
-  let failures = [];
-  let index = 0;
-  let airports = [];
-  const lastIndex = arr.length - 1;
-  // our goal is for the index to be equal to or greater than the last index in the array
-  while (index < lastIndex) {
-    if (arr[index] > 0) {
-      index = index + arr[index];
-      airports.push(index);
-      breakCount++;
-    } else {
-      airports.pop();
-      index = index - 1;
-      airports.push(index);
-      // if we are reaching an index for the second time, we will be reaching it forever, so return failure
-      if (failures.includes(index) || index < 0)
-        return { breakCount: -1, airports: [] };
-      failures.push(index);
-    }
-  }
-  return { breakCount, airports };
-};
-// const data1 = [2, 1, 2, 3, 1];
+// const data1 = [2, 1, 2, 3, 1]; // 2
+// const data2 = [1, 6, 3, 4, 5, 0, 0, 0, 6]; // 3
+// const data3 = [1, 1, 3, 3, 2, 0, 0, 6]; // -1
+// const data4 = [0, 1, 3, 3, 2, 0, 0, 6]; // -1
+// const data5 = [1, 1, 1, 4, 2, 0, 0, 6, 7]; // 5
+// const data6 = [1, 1, 1, 4, 2, 0, 0, 0, 7];  // -1
+// const data7 = [1, 1, 1, 4, 6, 0, 0, 0, 0]; // 5
+// const data8 = [1, 1]; // 1
+// const data9 = [3, 5, 3, 4, 0, 0, 3, 1, 0, 1]; // 3
 // console.log(countBreaks(data1));
-/* Sample Data
-const data1 = [2, 1, 2, 3, 1];
-const data2 = [1, 1, 3, 4, 5, 0, 0, 0, 6];
-const data3 = [1, 1, 3, 3, 2, 0, 0, 6];
-const data4 = [0, 1, 3, 3, 2, 0, 0, 6];
-const data5 = [1, 1, 1, 4, 2, 0, 0, 6, 7];
-const data6 = [1, 1, 1, 4, 2, 0, 0, 0, 7];
-const data7 = [1, 1, 1, 4, 6, 0, 0, 0, 0];
-const data8 = [1, 1];
-console.log(countBreaks(data1));
-console.log(countBreaks(data2));
-console.log(countBreaks(data3));
-console.log(countBreaks(data4));
-console.log(countBreaks(data5));
-console.log(countBreaks(data6));
-console.log(countBreaks(data7));
-console.log(countBreaks(data8));
-*/
+// console.log(countBreaks(data2));
+// console.log(countBreaks(data3));
+// console.log(countBreaks(data4));
+// console.log(countBreaks(data5));
+// console.log(countBreaks(data6));
+// console.log(countBreaks(data7));
+// console.log(countBreaks(data8));
+// console.log(countBreaks(data9));
